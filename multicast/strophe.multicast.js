@@ -53,41 +53,20 @@ Extend connection object to have plugin name 'multicast'.
     msgiq - the unique id used to send the message
     */
     message: function(receivers, message) {
-      var msg, msgid, parent, room_nick;
-      msg = $msg({
+      var msgid = this._connection.getUniqueId();
+      var msg = $msg({
         to: this.service,
         from: this.jid
       }).c("addresses", {
         xmlns: Strophe.NS.MULTICAST_ADDRESSES
       });
-      for(var r in receivers){
+      for(var rJid in receivers){
         msg = msg.c("address", {
           type: "to",
-          jid:
+          jid: rJid
         });
       }
-      .c("address", {
-        type: "to",
-        jid: 
-      }).c("body", {})t(message);
-      msg.up();
-      if (html_message != null) {
-        msg.c("html", {
-          xmlns: Strophe.NS.XHTML_IM
-        }).c("body", {
-          xmlns: Strophe.NS.XHTML
-        }).t(html_message);
-        if (msg.node.childNodes.length === 0) {
-          parent = msg.node.parentNode;
-          msg.up().up();
-          msg.node.removeChild(parent);
-        } else {
-          msg.up().up();
-        }
-      }
-      msg.c("x", {
-        xmlns: "jabber:x:event"
-      }).c("composing");
+      msg = msg.c("body", {})t(message);
       this._connection.send(msg);
       return msgid;
     },
