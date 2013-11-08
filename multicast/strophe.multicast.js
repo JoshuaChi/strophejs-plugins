@@ -25,16 +25,17 @@ Extend connection object to have plugin name 'multicast'.
       }
     },
 
-    check_support: function(node, options, event_cb, success, error, barejid){
+    check_support: function(success, error){
        var that = this._connection;
        var iqid = that.getUniqueId("iqchecksupport");
 
        var jid = this.jid;
-       if(barejid){
-         jid = Strophe.getBareJidFromJid(jid);
-       }
-       var iq = $iq({from:this.jid, to:this.service, type:'get', id:iqid})
-           .c('query', { xmlns:Strophe.NS.DISCO_INFO });
+       var iq = $iq({
+           from: this.jid, 
+           to: this.service, 
+           type:'get', 
+           id:iqid
+           }).c('query', { xmlns:Strophe.NS.DISCO_INFO });
 
        that.sendIQ(iq.tree(), success, error);
        return iqid;
@@ -61,12 +62,14 @@ Extend connection object to have plugin name 'multicast'.
         xmlns: Strophe.NS.MULTICAST_ADDRESSES
       });
       for(var rJid in receivers){
-        msg = msg.c("address", {
+        msg.c("address", {
           type: "to",
-          jid: rJid
+          jid: receivers[rJid]
         });
+        msg = msg.up();
       }
-      msg = msg.c("body", {})t(message);
+      msg = msg.up();
+      msg = msg.c("body", {}).t(message);
       this._connection.send(msg);
       return msgid;
     },
