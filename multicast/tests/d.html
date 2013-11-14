@@ -1,0 +1,35 @@
+<html>
+<head>
+  <title>XMPP Pubsub Demo :: Client</title> 
+  <meta charset=utf-8 />
+  <script type="text/javascript" src="k/prototype.js"></script>
+  <script type="text/javascript" src="k/strophe.js"></script> 
+  <script type="text/javascript" src="k/strophe.xdomainrequest.js"></script>
+  <script type="text/javascript" src="k/xmpp.js"></script> 
+  <link rel="stylesheet" href="css/main.css" media="screen" />
+</head>
+<body>
+<ul>
+  <li id='a'>
+    a@multicast.localhost
+  </li>
+  <li id='b'>
+    b@multicast.localhost
+  </li>
+  <li id='c'>
+    c@multicast.localhost
+  </li>
+  <li id='d'>
+    d@multicast.localhost
+  </li>
+</ul>
+<script type='text/javascript'>
+xmpp.init({
+'jid': 'd@multicast.localhost',
+'pass': 'd',
+'presence': 'available',
+'server': 'http://pubsub.lab:5280/http-bind'
+});
+</script>
+</body>
+</html>

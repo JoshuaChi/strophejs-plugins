@@ -1,0 +1,6 @@
+li.active {
+background-color:green;
+}
+li.inactive {
+background-color:gray;
+}
