@@ -1,6 +1,38 @@
 MultiCast = {
   connection: null,
-  plugin: null
+  plugin: null,
+  _onMessage: function(msg) {
+              console.log(msg);
+              var elements = msg.getElementsByTagName('body');
+              if (0 < elements.length) {
+                var data = elements[0].text || elements[0].textContent;
+                ary = data.split('#');
+                if('available' == ary[1]){
+                  $('#'+ary[0]).removeClass('inactive').addClass('active');
+                }else{
+                  $('#'+ary[0]).removeClass('active').addClass('inactive');
+                }
+                /*var jsonData = data.evalJSON();*/
+                /*rtns[jsonData.body.event_name](jsonData.body.event_body);*/
+              }
+              // We must return true to keep the handler alive.
+              // Returning false would remove it after it finishes.
+              return true;
+            },
+  _onPresence: function(pres) {
+               console.log(pres);
+               var elements = pres.getElementsByTagName('show');
+               if (0 < elements.length) {
+                 var data = elements[0].text || elements[0].textContent;
+                 var to = pres.getAttribute("to");
+                 ary = to.split('@');
+                 if('available' == data){
+                    $('#'+ary[0]).removeClass('inactive').addClass('active');
+                 }else{
+                    $('#'+ary[0]).removeClass('active').addClass('inactive');
+                 }
+               }
+             },
 };
 
 $(document).ready(function () {
@@ -48,14 +80,16 @@ $(document).bind('connect', function (ev, data) {
 });
 $(document).bind('connected', function () {
     $('#disconnect').removeAttr('disabled');
-    /*MultiCast.connection.send($pres());*/
-    /*MultiCast.plugin.check_support(function(data, options){*/
-    /*console.log(data);*/
-    /*console.log(options);*/
-    /*console.log("support multicast!");*/
-    /*console.log("now send messages to following addresses: b,c,d,e,f,g");*/
-    /*MultiCast.plugin.message(["b@multicast.localhost", "c@multicast.localhost", "d@multicast.localhost"], "admin is login now.");*/
-    /*}, function(){console.log("doesn't support multicast!");});*/
+    MultiCast.connection.send($pres());
+    MultiCast.plugin.check_support(function(data, options){
+      console.log(data);
+      console.log(options);
+      console.log("support multicast!");
+      console.log("now send messages to following addresses: b,c,d,e,f,g");
+      MultiCast.plugin.message(["b@multicast.localhost", "c@multicast.localhost", "d@multicast.localhost"], "admin is login now.");
+      }, function(){console.log("doesn't support multicast!");});
+    MultiCast.connection.addHandler(MultiCast._onMessage, null, 'message', null, null,  null);
+    MultiCast.connection.addHandler(MultiCast._onPresence, null, 'presence', null, null,  null);
 });
 $(document).bind('disconnected', function () {
     MultiCast.connection = null;

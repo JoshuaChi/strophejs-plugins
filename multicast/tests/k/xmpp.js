@@ -59,6 +59,20 @@ var xmpp = function() {
       // Returning false would remove it after it finishes.
       return true;
     },
+    _onPresence: function(pres) {
+      console.log(pres);
+      var elements = pres.getElementsByTagName('show');
+      if (0 < elements.length) {
+        var data = elements[0].text || elements[0].textContent;
+        var to = pres.getAttribute("to");
+        ary = to.split('@');
+        if('available' == data){
+          $(ary[0]).removeClassName('inactive').addClassName('active');
+        }else{
+          $(ary[0]).removeClassName('active').addClassName('inactive');
+        }
+      }
+    },
 
     _onConnect: function(status, err) {
       if (status == Strophe.Status.CONNECTING) {
@@ -68,6 +82,7 @@ var xmpp = function() {
         }
       } else if (status == Strophe.Status.CONNECTED) {
         xmpp._connection.addHandler(xmpp._onMessage, null, 'message', null, null,  null);
+        xmpp._connection.addHandler(xmpp._onPresence, null, 'presence', null, null,  null);
         xmpp.sendPresence(xmpp._presence);
         window.setTimeout(xmpp.disconnect, 2700000); // 45 min
       }

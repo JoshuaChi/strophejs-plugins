@@ -35,3 +35,9 @@ body {
             .offline {
               background-color: #777;
              }
+li.active {
+background-color:green;
+}
+li.inactive {
+background-color:gray;
+}
